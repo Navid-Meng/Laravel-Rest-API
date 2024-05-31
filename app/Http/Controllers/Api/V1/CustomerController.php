@@ -40,6 +40,8 @@ class CustomerController extends Controller
         return new CustomerResource(Customer::create($request->all()));
     }
 
+
+
     /**
      * Display the specified resource.
      */
@@ -68,6 +70,12 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer)
     {
-        //
+        $user = request()->user();
+        
+        if ($user != null && $user->tokenCan('delete')){
+            $customer->delete();
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
     }
 }
